@@ -1,4 +1,6 @@
 import argparse
+from . import data
+import os
 def main():
     args = parse_arg()
     args.func(args)
@@ -16,5 +18,6 @@ def parse_arg():
     return parser.parse_args()
 
 def init(args):
-    print("Hello,zxcgit")
+    data.init()
+    print(f"Successfully Initialized Empty Git Repository in {os.getcwd()}/{data.GIT_DIR}")
 
