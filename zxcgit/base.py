@@ -7,11 +7,17 @@ import os
 from . import data
 
 
+def is_ignore(full):
+    return ".zxcgit" in full.split(os.sep)
+
+
 def write_tree(dir_="."):
     with os.scandir(dir_) as it:
         for entry in it:
             # 判断本身，而不是符号链接的指向
             full = os.path.join(dir_, entry.name)
+            if is_ignore(full):
+                continue
             if entry.is_file(follow_symlinks=False):
                 # Todo 将这个文件存储在object中
                 print(full)
