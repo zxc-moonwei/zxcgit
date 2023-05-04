@@ -10,18 +10,24 @@ def init():
     os.makedirs(GIT_DIR, exist_ok=True)
 
 
-def hash_object(data):
-    oid = hashlib.sha1(data).hexdigest()  # 转16进制
+def hash_object(data, type_='blob'):
+    # 将type拼接到data前面
+    obj = type_.encode() + b'\x00' + data
+    oid = hashlib.sha1(obj).hexdigest()  # 转16进制
     path = os.path.join(GIT_DIR, "objects", oid)
-    # os.path.dirname用于返回文件在的目录，如果目录已经存在，
-    # 由于exist_ok参数设置为True，不会引发错误。
+    # os.path.dirname用于返回文件在的目录，如果目录已经存在，由于exist_ok参数设置为True，不会引发错误。
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "wb") as out:
-        out.write(data)
+        out.write(obj)
     return oid
 
 
-def cat_file(oid):
+def get_object(oid, expect=None):
     path = os.path.join(GIT_DIR, "objects", oid)
     with open(path, "rb") as f:
-        return f.read()
+        obj = f.read()
+    type_, _, data = obj.partition(b"\x00")
+    type_ = type_.decode()
+    if expect is not None:
+        assert expect == type_, f"TypeError!Expect {expect},but got {type_}"
+    return data
