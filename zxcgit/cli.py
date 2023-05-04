@@ -1,6 +1,7 @@
 import argparse
 from . import data
 import os
+import sys
 
 
 def main():
@@ -24,6 +25,11 @@ def parse_arg():
     hash_object_parser.set_defaults(func=hash_object)
     hash_object_parser.add_argument('file')
 
+    # zxcgit cat_file oid
+    cat_file_parser = commands.add_parser('cat_file')
+    cat_file_parser.set_defaults(func=cat_file)
+    cat_file_parser.add_argument('oid')
+
     return parser.parse_args()
 
 
@@ -36,3 +42,8 @@ def init(args):
 def hash_object(args):
     with open(args.file, 'rb') as f:
         print(data.hash_object(f.read()))
+
+
+def cat_file(args):
+    sys.stdout.flush()
+    sys.stdout.buffer.write(data.cat_file(args.oid))

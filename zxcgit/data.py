@@ -20,3 +20,8 @@ def hash_object(data):
         out.write(data)
     return oid
 
+
+def cat_file(oid):
+    path = os.path.join(GIT_DIR, "objects", oid)
+    with open(path, "rb") as f:
+        return f.read()
