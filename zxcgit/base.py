@@ -19,8 +19,8 @@ def write_tree(dir_="."):
             if is_ignore(full):
                 continue
             if entry.is_file(follow_symlinks=False):
-                # Todo 将这个文件存储在object中
-                print(full)
+                with open(full, "rb") as f:
+                    print(data.hash_object(f.read()), full)
             elif entry.is_dir(follow_symlinks=False):
                 write_tree(full)
 
