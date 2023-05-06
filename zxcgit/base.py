@@ -3,7 +3,9 @@
 来完成high-level的功能，如记录目录结构的tree object的实现
 """
 import os
-
+from collections import namedtuple
+import itertools
+import operator
 from . import data
 
 
@@ -34,7 +36,6 @@ def write_tree(dir_="."):
 
     tree = "\n".join([f"{type_} {oid} {name}" for type_, oid, name in entrys])
     return data.hash_object(tree.encode(), "tree")
-    # Todo 创建tree object
 
 
 #  对于当前tree对象，生成[(type_, oid, name), ... ]
@@ -95,10 +96,33 @@ def read_tree(oid):
 
 def commit(message):
     res = f"tree {write_tree()}\n"
-    res += f'parent {data.get_HEAD()}\n'
+    HEAD = data.get_HEAD()
+    # 如果是第一次commit，会返回none
+    if HEAD:
+        res += f'parent {HEAD}\n'
     res += '\n'
     res += message
 
     oid = data.hash_object(res.encode(), "commit")
     data.set_HEAD(oid)
     return oid
+
+
+Commit = namedtuple("Commit", ["tree", "parent", "message"])
+
+
+def get_commit(oid):
+    parent = None
+    commit_ = data.get_object(oid, "commit").decode()
+    lines = iter(commit_.splitlines())
+    for line in itertools.takewhile(operator.truth, lines):
+        type_, oid = line.split()
+        if type_ == "tree":
+            tree = oid
+        elif type_ == "parent":
+            parent = oid
+        else:
+            assert False, f"Unknown field {type_}"
+
+    message = "\n".join(lines)
+    return Commit(tree, parent, message)

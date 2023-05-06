@@ -40,6 +40,8 @@ def set_HEAD(oid):
 
 
 def get_HEAD():
+    # 第一次get_HEAD会返回None
     path = os.path.join(GIT_DIR, "HEAD")
-    with open(path, "r") as f:
-        return f.read()
+    if os.path.isfile(path):
+        with open(path, "r") as f:
+            return f.read()
