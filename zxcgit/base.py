@@ -35,3 +35,40 @@ def write_tree(dir_="."):
     tree = "\n".join([f"{type_} {oid} {name}" for type_, oid, name in entrys])
     return data.hash_object(tree.encode(), "tree")
     # Todo 创建tree object
+
+
+#  对于当前tree对象，生成[(type_, oid, name), ... ]
+def _iter_tree_entries(oid):
+    tree = data.get_object(oid, "tree")
+    for entry in tree.decode().splitlines():
+        type_, oid, name = entry.split()
+        yield type_, oid, name
+
+
+'''
+res = {blob_path:blob_oid
+'''
+
+
+def get_tree(oid, base_path="."):
+    res = {}
+    for type_, oid, name in _iter_tree_entries(oid):
+        path = os.path.join(base_path, name)
+        if type_ == "blob":
+            res[path] = oid
+        elif type_ == "tree":
+            # 将新字典更新到res
+            res.update(get_tree(oid, path))
+        else:
+            assert False, f"{type_} is not a tree entry"
+    return res
+
+
+# get_object(oid)----> path
+def read_tree(oid):
+    # {}.item()获得[(key,value)]
+    for path, oid in get_tree(oid).items():
+        # 递归创建目录，如果已存在不报错
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "wb") as out:
+            out.write(data.get_object(oid, "blob"))

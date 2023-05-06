@@ -30,9 +30,14 @@ def parse_arg():
     cat_file_parser = commands.add_parser('cat_file')
     cat_file_parser.set_defaults(func=cat_file)
     cat_file_parser.add_argument('oid')
-
+    # zxcgit write_tree
     write_tree_parser = commands.add_parser('write_tree')
     write_tree_parser.set_defaults(func=write_tree)
+
+    # zxcgit read_tree tree_oid
+    read_tree_parser = commands.add_parser('read_tree')
+    read_tree_parser.set_defaults(func=read_tree)
+    read_tree_parser.add_argument('tree_oid')
 
     return parser.parse_args()
 
@@ -55,3 +60,7 @@ def cat_file(args):
 
 def write_tree(args):
     print(base.write_tree())
+
+
+def read_tree(args):
+    base.read_tree(args.tree_oid)
