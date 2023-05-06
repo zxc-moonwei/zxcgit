@@ -31,3 +31,15 @@ def get_object(oid, expect=None):
     if expect is not None:
         assert expect == type_, f"TypeError!Expect {expect},but got {type_}"
     return data
+
+
+def set_HEAD(oid):
+    path = os.path.join(GIT_DIR, "HEAD")
+    with open(path, "w") as f:
+        f.write(oid)
+
+
+def get_HEAD():
+    path = os.path.join(GIT_DIR, "HEAD")
+    with open(path, "r") as f:
+        return f.read()
