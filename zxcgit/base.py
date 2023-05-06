@@ -64,9 +64,28 @@ def get_tree(oid, base_path="."):
     return res
 
 
+def _empty_repo():
+    for root, dirs, files in os.walk(".", topdown=False):
+        for file in files:
+            path = os.path.join(root, file)
+            # print(path)
+            if is_ignore(path):
+                continue
+            os.remove(path)
+        for dir_ in dirs:
+            path = os.path.join(root, dir_)
+            if is_ignore(path):
+                continue
+            try:
+                os.rmdir(path)
+            except(FileNotFoundError, OSError):
+                pass
+
+
 # get_object(oid)----> path
 def read_tree(oid):
-    # {}.item()获得[(key,value)]
+    _empty_repo()
+    # {}.item()获得[(key,value)...]
     for path, oid in get_tree(oid).items():
         # 递归创建目录，如果已存在不报错
         os.makedirs(os.path.dirname(path), exist_ok=True)
