@@ -91,3 +91,11 @@ def read_tree(oid):
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "wb") as out:
             out.write(data.get_object(oid, "blob"))
+
+
+def commit(message):
+    res = f"tree {write_tree()}"
+    res += '\n'
+    res += message
+
+    return data.hash_object(res.encode(), "commit")
