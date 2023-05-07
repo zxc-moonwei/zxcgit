@@ -126,3 +126,9 @@ def get_commit(oid):
 
     message = "\n".join(lines)
     return Commit(tree, parent, message)
+
+
+def checkout(oid):
+    commit_ = get_commit(oid)
+    read_tree(commit_.tree)
+    data.set_HEAD(oid)

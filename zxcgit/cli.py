@@ -50,6 +50,11 @@ def parse_arg():
     log_parser.set_defaults(func=log)
     log_parser.add_argument('oid', nargs='?')
 
+    # zxcgit checkout commit_oid
+    checkout_parser = commands.add_parser('checkout')
+    checkout_parser.set_defaults(func=checkout)
+    checkout_parser.add_argument('oid')
+
     return parser.parse_args()
 
 
@@ -88,3 +93,7 @@ def log(args):
         print(f"commit {oid}")
         print(textwrap.indent(commit_.message, "    "))
         oid = commit_.parent
+
+
+def checkout(args):
+    base.checkout(args.oid)
