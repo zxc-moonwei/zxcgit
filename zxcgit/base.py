@@ -6,6 +6,7 @@ import os
 from collections import namedtuple
 import itertools
 import operator
+import string
 from . import data
 
 
@@ -140,4 +141,19 @@ def create_tag(name, oid):
 
 
 def get_oid(name):
-    return data.get_ref(name) or name
+    # is a ref
+    path_search = [
+        os.path.join(f"{name}"),
+        os.path.join("refs", f"{name}"),
+        os.path.join("refs", "tags", f"{name}"),
+        os.path.join("refs", "head", f"{name}")
+        ]
+    for path in path_search:
+        if data.get_ref(path):
+            return data.get_ref(path)
+    # is a oid
+    is_hex = all(c in string.hexdigits for c in name)
+    if len(name) == 40 and is_hex:
+        return name
+    assert False, f"Unknown name {name}"
+
