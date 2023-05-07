@@ -33,15 +33,15 @@ def get_object(oid, expect=None):
     return data
 
 
-def set_HEAD(oid):
-    path = os.path.join(GIT_DIR, "HEAD")
+def update_ref(ref, oid):
+    path = os.path.join(GIT_DIR, ref)
     with open(path, "w") as f:
         f.write(oid)
 
 
-def get_HEAD():
+def get_ref(ref):
     # 第一次get_HEAD会返回None
-    path = os.path.join(GIT_DIR, "HEAD")
+    path = os.path.join(GIT_DIR, ref)
     if os.path.isfile(path):
         with open(path, "r") as f:
             return f.read()

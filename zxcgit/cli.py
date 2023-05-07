@@ -93,7 +93,7 @@ def commit(args):
 
 
 def log(args):
-    oid = args.oid or data.get_HEAD()
+    oid = args.oid or data.get_ref("HEAD")
     while oid is not None:
         commit_ = base.get_commit(oid)
         print(f"commit {oid}")
@@ -106,5 +106,5 @@ def checkout(args):
 
 
 def tag(args):
-    oid = args.oid or data.get_HEAD()
+    oid = args.oid or data.get_ref("HEAD")
     base.create_tag(args.name, oid)

@@ -96,7 +96,7 @@ def read_tree(oid):
 
 def commit(message):
     res = f"tree {write_tree()}\n"
-    HEAD = data.get_HEAD()
+    HEAD = data.get_ref("HEAD")
     # 如果是第一次commit，会返回none
     if HEAD:
         res += f'parent {HEAD}\n'
@@ -104,7 +104,7 @@ def commit(message):
     res += message
 
     oid = data.hash_object(res.encode(), "commit")
-    data.set_HEAD(oid)
+    data.update_ref("HEAD", oid)
     return oid
 
 
@@ -131,7 +131,7 @@ def get_commit(oid):
 def checkout(oid):
     commit_ = get_commit(oid)
     read_tree(commit_.tree)
-    data.set_HEAD(oid)
+    data.update_ref("HEAD", oid)
 
 
 def create_tag(name, oid):
