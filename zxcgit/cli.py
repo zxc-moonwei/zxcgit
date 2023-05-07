@@ -27,10 +27,12 @@ def parse_arg():
     hash_object_parser.set_defaults(func=hash_object)
     hash_object_parser.add_argument('file')
 
+    # oid 是一个func
+    oid = base.get_oid
     # zxcgit cat_file oid
     cat_file_parser = commands.add_parser('cat_file')
     cat_file_parser.set_defaults(func=cat_file)
-    cat_file_parser.add_argument('oid')
+    cat_file_parser.add_argument('oid', type=oid)
     # zxcgit write_tree
     write_tree_parser = commands.add_parser('write_tree')
     write_tree_parser.set_defaults(func=write_tree)
@@ -38,7 +40,7 @@ def parse_arg():
     # zxcgit read_tree tree_oid
     read_tree_parser = commands.add_parser('read_tree')
     read_tree_parser.set_defaults(func=read_tree)
-    read_tree_parser.add_argument('tree_oid')
+    read_tree_parser.add_argument('tree_oid', type=oid)
 
     # zxcgit commit -m "message"
     commit_parser = commands.add_parser('commit')
@@ -48,18 +50,18 @@ def parse_arg():
     # zxcgit log
     log_parser = commands.add_parser('log')
     log_parser.set_defaults(func=log)
-    log_parser.add_argument('oid', nargs='?')
+    log_parser.add_argument('oid', nargs='?', type=oid)
 
     # zxcgit checkout commit_oid
     checkout_parser = commands.add_parser('checkout')
     checkout_parser.set_defaults(func=checkout)
-    checkout_parser.add_argument('oid')
+    checkout_parser.add_argument('oid', type=oid)
 
     # zxcgit tag name commit_oid
     tag_parser = commands.add_parser('tag')
     tag_parser.set_defaults(func=tag)
     tag_parser.add_argument('name')
-    tag_parser.add_argument('oid', nargs='?')
+    tag_parser.add_argument('oid', nargs='?', type=oid)
 
     return parser.parse_args()
 

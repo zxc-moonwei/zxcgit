@@ -41,7 +41,7 @@ def update_ref(ref, oid):
 
 
 def get_ref(ref):
-    # 第一次get_HEAD会返回None
+    # 第一次get_ref会返回None
     path = os.path.join(GIT_DIR, ref)
     if os.path.isfile(path):
         with open(path, "r") as f:
