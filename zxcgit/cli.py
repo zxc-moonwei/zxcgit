@@ -106,5 +106,6 @@ def checkout(args):
 
 
 def tag(args):
+    # 与命令行的nargs='?'，如果提供了，就用它的arg.oid，否则为none
     oid = args.oid or data.get_ref("HEAD")
     base.create_tag(args.name, oid)

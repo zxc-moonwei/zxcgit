@@ -135,4 +135,5 @@ def checkout(oid):
 
 
 def create_tag(name, oid):
-    pass
+    ref_path = os.path.join("refs", "tags", f"{name}")
+    data.update_ref(ref_path, oid)

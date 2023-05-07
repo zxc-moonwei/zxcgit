@@ -35,6 +35,7 @@ def get_object(oid, expect=None):
 
 def update_ref(ref, oid):
     path = os.path.join(GIT_DIR, ref)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
         f.write(oid)
 
