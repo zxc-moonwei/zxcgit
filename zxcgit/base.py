@@ -160,3 +160,16 @@ def get_oid(name):
     assert False, f"Unknown name {name}"
 
 
+def iter_commit_parents(oids):
+    oids = set(oids)
+    visited = set()
+    while oids:
+        oid = oids.pop()
+        if not oid or oid in visited:
+            continue
+        yield oid
+
+        commit_ = get_commit(oid)
+        oids.add(commit_.parent)
+
+

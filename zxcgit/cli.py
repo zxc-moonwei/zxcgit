@@ -99,7 +99,7 @@ def commit(args):
 
 
 def log(args):
-    oid = args.oid or data.get_ref("HEAD")
+    oid = args.oid
     while oid is not None:
         commit_ = base.get_commit(oid)
         print(f"commit {oid}")
@@ -112,12 +112,19 @@ def checkout(args):
 
 
 def tag(args):
-    # 与命令行的nargs='?'，如果提供了，就用它的arg.oid，否则为none
-    oid = args.oid or data.get_ref("HEAD")
+    oid = args.oid
     base.create_tag(args.name, oid)
 
 
 def k(args):
+    oids = set()
     for ref, oid in data.iter_ref():
+        oids.add(oid)
         print(ref, oid)
+
+    for commit_oid in base.iter_commit_parents(oids):
+        commit_ = base.get_commit(commit_oid)
+        print(commit_oid)
+        if commit_.parent:
+            print(f"Parent {commit_.parent}")
 
