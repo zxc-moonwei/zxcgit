@@ -50,7 +50,7 @@ def parse_arg():
     # zxcgit log
     log_parser = commands.add_parser('log')
     log_parser.set_defaults(func=log)
-    log_parser.add_argument('oid', nargs='?', type=oid)
+    log_parser.add_argument('oid', nargs='?', type=oid, default='@')
 
     # zxcgit checkout commit_oid
     checkout_parser = commands.add_parser('checkout')
@@ -61,7 +61,7 @@ def parse_arg():
     tag_parser = commands.add_parser('tag')
     tag_parser.set_defaults(func=tag)
     tag_parser.add_argument('name')
-    tag_parser.add_argument('oid', nargs='?', type=oid)
+    tag_parser.add_argument('oid', nargs='?', type=oid, default="@")
 
     return parser.parse_args()
 

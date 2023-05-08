@@ -141,6 +141,8 @@ def create_tag(name, oid):
 
 
 def get_oid(name):
+    if name == "@":
+        name = "HEAD"
     # is a ref
     path_search = [
         os.path.join(f"{name}"),
