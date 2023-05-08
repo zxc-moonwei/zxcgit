@@ -4,6 +4,7 @@ from . import base
 import os
 import sys
 import textwrap
+import subprocess
 
 
 def main():
@@ -117,14 +118,30 @@ def tag(args):
 
 
 def k(args):
+    dot = 'digraph commits {\n'
+
     oids = set()
-    for ref, oid in data.iter_ref():
-        oids.add(oid)
-        print(ref, oid)
+    for refname, ref in data.iter_ref():
+        dot += f'"{refname}" [shape=note]\n'
+        dot += f'"{refname}" -> "{ref}"\n'
+        oids.add(ref)
 
-    for commit_oid in base.iter_commit_parents(oids):
-        commit_ = base.get_commit(commit_oid)
-        print(commit_oid)
-        if commit_.parent:
-            print(f"Parent {commit_.parent}")
+    for oid in base.iter_commit_parents(oids):
+        commit = base.get_commit(oid)
+        dot += f'"{oid}" [shape=box style=filled label="{oid[:10]}"]\n'
+        if commit.parent:
+            dot += f'"{oid}" -> "{commit.parent}"\n'
 
+    dot += '}'
+    # print(dot)
+
+    with subprocess.Popen(
+            ['dot', '-Tpng'],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE) as proc:
+        image_data, _ = proc.communicate(dot.encode())
+
+    with open('graph.png', 'wb') as f:
+        f.write(image_data)
+
+    print("Successfunlly render grafh in ./grafh.png")
