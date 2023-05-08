@@ -44,9 +44,13 @@ def update_ref(ref, oid):
 def get_ref(ref):
     # 第一次get_ref会返回None
     path = os.path.join(GIT_DIR, ref)
+    value = None
     if os.path.isfile(path):
         with open(path, "r") as f:
-            return f.read()
+            value = f.read()
+    if value and value.startswith('ref:'):
+        return get_ref(value.split(':', 1)[1].strip())
+    return value
 
 
 def iter_ref():

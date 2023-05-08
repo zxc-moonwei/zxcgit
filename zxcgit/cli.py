@@ -68,6 +68,11 @@ def parse_arg():
     k_paeser = commands.add_parser('k')
     k_paeser.set_defaults(func=k)
 
+    branch_parser = commands.add_parser('branch')
+    branch_parser.set_defaults(func=branch)
+    branch_parser.add_argument('name')
+    branch_parser.add_argument('start_point', default='@', type=oid, nargs='?')
+
     return parser.parse_args()
 
 
@@ -115,6 +120,11 @@ def checkout(args):
 def tag(args):
     oid = args.oid
     base.create_tag(args.name, oid)
+
+
+def branch(args):
+    base.creat_branch(args.name, args.start_point)
+    print(f"Create {args.name} at {args.start_point[:10]}")
 
 
 def k(args):

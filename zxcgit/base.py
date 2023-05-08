@@ -140,6 +140,11 @@ def create_tag(name, oid):
     data.update_ref(ref_path, oid)
 
 
+def creat_branch(name, oid):
+    branch_path = os.path.join("refs", "heads", f"{name}")
+    data.update_ref(branch_path, oid)
+
+
 def get_oid(name):
     if name == "@":
         name = "HEAD"
@@ -148,7 +153,7 @@ def get_oid(name):
         os.path.join(f"{name}"),
         os.path.join("refs", f"{name}"),
         os.path.join("refs", "tags", f"{name}"),
-        os.path.join("refs", "head", f"{name}")
+        os.path.join("refs", "heads", f"{name}")
     ]
     for path in path_search:
         if data.get_ref(path):
