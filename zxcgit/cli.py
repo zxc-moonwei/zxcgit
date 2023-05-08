@@ -63,6 +63,10 @@ def parse_arg():
     tag_parser.add_argument('name')
     tag_parser.add_argument('oid', nargs='?', type=oid, default="@")
 
+    # zxcgit k
+    k_paeser = commands.add_parser('k')
+    k_paeser.set_defaults(func=k)
+
     return parser.parse_args()
 
 
@@ -111,3 +115,9 @@ def tag(args):
     # 与命令行的nargs='?'，如果提供了，就用它的arg.oid，否则为none
     oid = args.oid or data.get_ref("HEAD")
     base.create_tag(args.name, oid)
+
+
+def k(args):
+    for ref, oid in data.iter_ref():
+        print(ref, oid)
+

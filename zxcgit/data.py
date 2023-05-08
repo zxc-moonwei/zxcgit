@@ -40,9 +40,21 @@ def update_ref(ref, oid):
         f.write(oid)
 
 
+# 传来ref在.zxcgit下的实际路径
 def get_ref(ref):
     # 第一次get_ref会返回None
     path = os.path.join(GIT_DIR, ref)
     if os.path.isfile(path):
         with open(path, "r") as f:
             return f.read()
+
+
+def iter_ref():
+    res = ['HEAD']
+    # ref_name为ref/下所有filename，以ref为root,或者为‘HEAD’
+    for root, _, filenames in os.walk(os.path.join(GIT_DIR, "refs")):
+        root = os.path.relpath(root, GIT_DIR)
+        res.extend(os.path.join(root, c) for c in filenames)
+        # print(res)
+    for ref in res:
+        yield ref, get_ref(ref)
