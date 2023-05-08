@@ -3,7 +3,7 @@
 来完成high-level的功能，如记录目录结构的tree object的实现
 """
 import os
-from collections import namedtuple
+from collections import namedtuple, deque
 import itertools
 import operator
 import string
@@ -149,7 +149,7 @@ def get_oid(name):
         os.path.join("refs", f"{name}"),
         os.path.join("refs", "tags", f"{name}"),
         os.path.join("refs", "head", f"{name}")
-        ]
+    ]
     for path in path_search:
         if data.get_ref(path):
             return data.get_ref(path)
@@ -161,15 +161,13 @@ def get_oid(name):
 
 
 def iter_commit_parents(oids):
-    oids = set(oids)
+    oids = deque(oids)
     visited = set()
     while oids:
-        oid = oids.pop()
+        oid = oids.popleft()
         if not oid or oid in visited:
             continue
         yield oid
 
         commit_ = get_commit(oid)
-        oids.add(commit_.parent)
-
-
+        oids.appendleft(commit_.parent)
