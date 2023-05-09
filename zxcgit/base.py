@@ -157,7 +157,7 @@ def get_oid(name):
     ]
     for path in path_search:
         if data.get_ref(path):
-            return data.get_ref(path).value
+            return data.get_ref(path, deref=False).value
     # is a oid
     is_hex = all(c in string.hexdigits for c in name)
     if len(name) == 40 and is_hex:
