@@ -97,7 +97,7 @@ def read_tree(oid):
 
 def commit(message):
     res = f"tree {write_tree()}\n"
-    HEAD = data.get_ref("HEAD")
+    HEAD = data.get_ref("HEAD").value
     # 如果是第一次commit，会返回none
     if HEAD:
         res += f'parent {HEAD}\n'
@@ -105,7 +105,7 @@ def commit(message):
     res += message
 
     oid = data.hash_object(res.encode(), "commit")
-    data.update_ref("HEAD", oid)
+    data.update_ref("HEAD", data.RefValue(symbolic=False, value=oid))
     return oid
 
 
@@ -132,17 +132,17 @@ def get_commit(oid):
 def checkout(oid):
     commit_ = get_commit(oid)
     read_tree(commit_.tree)
-    data.update_ref("HEAD", oid)
+    data.update_ref("HEAD", data.RefValue(symbolic=False, value=oid))
 
 
 def create_tag(name, oid):
     ref_path = os.path.join("refs", "tags", f"{name}")
-    data.update_ref(ref_path, oid)
+    data.update_ref(ref_path, data.RefValue(symbolic=False, value=oid))
 
 
 def creat_branch(name, oid):
     branch_path = os.path.join("refs", "heads", f"{name}")
-    data.update_ref(branch_path, oid)
+    data.update_ref(branch_path, data.RefValue(symbolic=False, value=oid))
 
 
 def get_oid(name):
@@ -157,7 +157,7 @@ def get_oid(name):
     ]
     for path in path_search:
         if data.get_ref(path):
-            return data.get_ref(path)
+            return data.get_ref(path).value
     # is a oid
     is_hex = all(c in string.hexdigits for c in name)
     if len(name) == 40 and is_hex:

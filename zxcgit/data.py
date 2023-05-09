@@ -2,6 +2,7 @@
 
 import os
 import hashlib
+from collections import namedtuple
 
 GIT_DIR = '.zxcgit'
 
@@ -35,25 +36,36 @@ def get_object(oid, expect=None):
     return data
 
 
-def update_ref(ref, oid):
+RefValue = namedtuple('RefValue', ['symbolic', 'value'])
+
+
+def update_ref(ref, ref_value):
+    # 把符号链处理掉真正指向oid的ref
+    ref = _get_ref_internal(ref)
     path = os.path.join(GIT_DIR, ref)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
-        f.write(oid)
+        f.write(ref_value.value)
+
+
+def get_ref(ref):
+    return _get_ref_internal(ref)[1]
 
 
 # 传来ref在.zxcgit下的实际路径
-# 输出ref真正指向的oid
-def get_ref(ref):
+# 如果是符号链，传真正指向oid的ref_name , RefValue
+# 输出ref_name, RefValue(symbolic,value)
+def _get_ref_internal(ref):
     # 第一次get_ref会返回None
     path = os.path.join(GIT_DIR, ref)
     value = None
     if os.path.isfile(path):
         with open(path, "r") as f:
             value = f.read()
-    if value and value.startswith('ref:'):
-        return get_ref(value.split(':', 1)[1].strip())
-    return value
+    symbolic = bool(value) and value.startswith('ref:')
+    if symbolic:
+        return _get_ref_internal(value.split(':', 1)[1].strip())
+    return ref, RefValue(symbolic=False, value=value)
 
 
 # 遍历.zxcgit/refs所有的ref
