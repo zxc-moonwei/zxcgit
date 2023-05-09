@@ -10,6 +10,8 @@ def init():
     os.makedirs(GIT_DIR, exist_ok=True)
 
 
+# 传来一个data
+# 在.zxcgit/object下建立blob object,tree object等hash object
 def hash_object(data, type_='blob'):
     # 将type拼接到data前面
     obj = type_.encode() + b'\x00' + data
@@ -41,6 +43,7 @@ def update_ref(ref, oid):
 
 
 # 传来ref在.zxcgit下的实际路径
+# 输出ref真正指向的oid
 def get_ref(ref):
     # 第一次get_ref会返回None
     path = os.path.join(GIT_DIR, ref)
@@ -53,6 +56,8 @@ def get_ref(ref):
     return value
 
 
+# 遍历.zxcgit/refs所有的ref
+# 返回生成器ref_name,ref指向的oid
 def iter_ref():
     res = ['HEAD']
     # ref_name为ref/下所有filename，以ref为root,或者为‘HEAD’
